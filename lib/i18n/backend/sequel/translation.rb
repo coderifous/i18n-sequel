@@ -60,13 +60,14 @@ module I18n
           super || []
         end
 
-        class << self
+        dataset_module do
+
           def locale(locale)
-            where(:locale => locale.to_s)
+            where(locale: locale.to_s)
           end
 
           def lookup(keys, *separator)
-            column_name = connection.quote_column_name('key')
+            column_name = db.literal(:key)
             keys = Array(keys).map! { |key| key.to_s }
 
             unless separator.empty?
@@ -75,12 +76,17 @@ module I18n
             end
 
             namespace = "#{keys.last}#{I18n::Backend::Flatten::FLATTEN_SEPARATOR}%"
-            where("#{column_name} IN (?) OR #{column_name} LIKE ?", keys, namespace)
+            where(key: keys).or(::Sequel.like(:key, namespace))
           end
+
+        end
+
+        class << self
 
           def available_locales
             Translation.select('DISTINCT locale').to_a.map { |t| t.locale.to_sym }
           end
+
         end
 
         def interpolates?(key)

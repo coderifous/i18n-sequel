@@ -1,8 +1,8 @@
-# This module is intended to be mixed into the ActiveRecord backend to allow
+# This module is intended to be mixed into the Sequel backend to allow
 # storing Ruby Procs as translation values in the database.
 #
-#   I18n.backend = I18n::Backend::ActiveRecord.new
-#   I18n::Backend::ActiveRecord::Translation.send(:include, I18n::Backend::ActiveRecord::StoreProcs)
+#   I18n.backend = I18n::Backend::Sequel.new
+#   I18n::Backend::Sequel::Translation.send(:include, I18n::Backend::Sequel::StoreProcs)
 #
 # The StoreProcs module requires the ParseTree and ruby2ruby gems and therefor
 # was extracted from the original backend.
@@ -19,7 +19,7 @@ end
 
 module I18n
   module Backend
-    class ActiveRecord
+    class Sequel
       module StoreProcs
         def value=(v)
           case v

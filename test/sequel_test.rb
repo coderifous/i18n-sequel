@@ -1,36 +1,36 @@
 require 'test_helper'
 
-class I18nBackendActiveRecordTest < I18n::TestCase
+class I18nBackendSequelTest < I18n::TestCase
   def setup
-    I18n.backend = I18n::Backend::ActiveRecord.new
+    I18n.backend = I18n::Backend::Sequel.new
     store_translations(:en, :foo => { :bar => 'bar', :baz => 'baz' })
   end
 
   def teardown
-    I18n::Backend::ActiveRecord::Translation.destroy_all
-    I18n::Backend::ActiveRecord.instance_variable_set :@config, I18n::Backend::ActiveRecord::Configuration.new
+    I18n::Backend::Sequel::Translation.destroy_all
+    I18n::Backend::Sequel.instance_variable_set :@config, I18n::Backend::Sequel::Configuration.new
     super
   end
 
   test "store_translations does not allow ambiguous keys (1)" do
-    I18n::Backend::ActiveRecord::Translation.delete_all
+    I18n::Backend::Sequel::Translation.delete_all
     I18n.backend.store_translations(:en, :foo => 'foo')
     I18n.backend.store_translations(:en, :foo => { :bar => 'bar' })
     I18n.backend.store_translations(:en, :foo => { :baz => 'baz' })
 
-    translations = I18n::Backend::ActiveRecord::Translation.locale(:en).lookup('foo').all
+    translations = I18n::Backend::Sequel::Translation.locale(:en).lookup('foo').all
     assert_equal %w(bar baz), translations.map(&:value)
 
     assert_equal({ :bar => 'bar', :baz => 'baz' }, I18n.t(:foo))
   end
 
   test "store_translations does not allow ambiguous keys (2)" do
-    I18n::Backend::ActiveRecord::Translation.delete_all
+    I18n::Backend::Sequel::Translation.delete_all
     I18n.backend.store_translations(:en, :foo => { :bar => 'bar' })
     I18n.backend.store_translations(:en, :foo => { :baz => 'baz' })
     I18n.backend.store_translations(:en, :foo => 'foo')
 
-    translations = I18n::Backend::ActiveRecord::Translation.locale(:en).lookup('foo').all
+    translations = I18n::Backend::Sequel::Translation.locale(:en).lookup('foo').all
     assert_equal %w(foo), translations.map(&:value)
 
     assert_equal 'foo', I18n.t(:foo)
@@ -42,7 +42,7 @@ class I18nBackendActiveRecordTest < I18n::TestCase
   end
 
   test "missing translations table does not cause an error in #available_locales" do
-    I18n::Backend::ActiveRecord::Translation.expects(:available_locales).raises(::ActiveRecord::StatementInvalid, 'msg')
+    I18n::Backend::Sequel::Translation.expects(:available_locales).raises(::Sequel::StatementInvalid, 'msg')
     assert_equal [], I18n.backend.available_locales
   end
 
@@ -51,14 +51,14 @@ class I18nBackendActiveRecordTest < I18n::TestCase
   end
 
   test "available_locales returns uniq locales" do
-    I18n::Backend::ActiveRecord::Translation.delete_all
+    I18n::Backend::Sequel::Translation.delete_all
     I18n.backend.store_translations(:en, :foo => { :bar => 'bar' })
     I18n.backend.store_translations(:en, :foo => { :baz => 'baz' })
     I18n.backend.store_translations(:de, :foo1 => 'foo')
     I18n.backend.store_translations(:de, :foo2 => 'foo')
     I18n.backend.store_translations(:uk, :foo3 => 'foo')
 
-    available_locales = I18n::Backend::ActiveRecord::Translation.available_locales
+    available_locales = I18n::Backend::Sequel::Translation.available_locales
     assert_equal 3, available_locales.size
     assert_includes available_locales, :en
     assert_includes available_locales, :de
@@ -66,25 +66,25 @@ class I18nBackendActiveRecordTest < I18n::TestCase
   end
 
   test "the default configuration has cleanup_with_destroy == false" do
-    refute I18n::Backend::ActiveRecord.config.cleanup_with_destroy
+    refute I18n::Backend::Sequel.config.cleanup_with_destroy
   end
 
   test "the configuration supports cleanup_with_destroy being set" do
-    I18n::Backend::ActiveRecord.configure do |config|
+    I18n::Backend::Sequel.configure do |config|
       config.cleanup_with_destroy = true
     end
 
-    assert I18n::Backend::ActiveRecord.config.cleanup_with_destroy
+    assert I18n::Backend::Sequel.config.cleanup_with_destroy
   end
 
   test "fetching subtree of translations" do
-    I18n::Backend::ActiveRecord::Translation.delete_all
+    I18n::Backend::Sequel::Translation.delete_all
     I18n.backend.store_translations(:en, foo: { bar: { fizz: 'buzz', spuz: 'zazz' }, baz: { fizz: 'buzz' } })
     assert_equal I18n.t(:foo), { bar: { fizz: 'buzz', spuz: 'zazz' }, baz: { fizz: 'buzz' } }
   end
 
   test "build_translation_hash_by_key" do
-    translation = I18n::Backend::ActiveRecord::Translation.new(value: 'translation', key: 'foo.bar.fizz.buzz')
+    translation = I18n::Backend::Sequel::Translation.new(value: 'translation', key: 'foo.bar.fizz.buzz')
     expected_hash = { 'bar' => { 'fizz' => { 'buzz' => 'translation' } } }
     assert_equal I18n.backend.send(:build_translation_hash_by_key, 'foo', translation), expected_hash
   end

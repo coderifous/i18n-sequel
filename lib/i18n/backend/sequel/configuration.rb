@@ -1,6 +1,6 @@
 module I18n
   module Backend
-    class ActiveRecord
+    class Sequel
       class Configuration
         attr_accessor :cleanup_with_destroy
 

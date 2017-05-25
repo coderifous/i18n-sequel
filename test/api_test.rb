@@ -1,13 +1,13 @@
 require 'test_helper'
 
-class I18nActiveRecordApiTest < I18n::TestCase
+class I18nSequelApiTest < I18n::TestCase
   def setup
-    I18n.backend = I18n::Backend::ActiveRecord.new
+    I18n.backend = I18n::Backend::Sequel.new
     super
   end
 
   def self.can_store_procs?
-    I18n::Backend::ActiveRecord.included_modules.include?(I18n::Backend::ActiveRecord::StoreProcs)
+    I18n::Backend::Sequel.included_modules.include?(I18n::Backend::Sequel::StoreProcs)
   end
 
   include I18n::Tests::Basics
@@ -23,7 +23,7 @@ class I18nActiveRecordApiTest < I18n::TestCase
   include I18n::Tests::Localization::Time
   include I18n::Tests::Localization::Procs if can_store_procs?
 
-  test "make sure we use an ActiveRecord backend" do
-    assert_equal I18n::Backend::ActiveRecord, I18n.backend.class
+  test "make sure we use an Sequel backend" do
+    assert_equal I18n::Backend::Sequel, I18n.backend.class
   end
 end

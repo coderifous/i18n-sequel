@@ -10,21 +10,21 @@ require 'i18n/tests'
 
 begin
   require 'active_record'
-  ::ActiveRecord::Base.connection
+  ::Sequel::Base.connection
 rescue LoadError => e
-  puts "can't use ActiveRecord backend because: #{e.message}"
-rescue ::ActiveRecord::ConnectionNotEstablished
+  puts "can't use Sequel backend because: #{e.message}"
+rescue ::Sequel::ConnectionNotEstablished
   require 'i18n/backend/active_record'
   case ENV['DB']
   when 'postgres'
-    ::ActiveRecord::Base.establish_connection adapter: 'postgresql', database: 'i18n_unittest', username: ENV['PG_USER'] || 'i18n', password: '', host: 'localhost'
+    ::Sequel::Base.establish_connection adapter: 'postgresql', database: 'i18n_unittest', username: ENV['PG_USER'] || 'i18n', password: '', host: 'localhost'
   when 'mysql'
-    ::ActiveRecord::Base.establish_connection adapter: 'mysql2', database: 'i18n_unittest', username: 'root', password: '', host: 'localhost'
+    ::Sequel::Base.establish_connection adapter: 'mysql2', database: 'i18n_unittest', username: 'root', password: '', host: 'localhost'
   else
-    ::ActiveRecord::Base.establish_connection adapter: 'sqlite3', database: ':memory:'
+    ::Sequel::Base.establish_connection adapter: 'sqlite3', database: ':memory:'
   end
-  ::ActiveRecord::Migration.verbose = false
-  ::ActiveRecord::Schema.define(:version => 1) do
+  ::Sequel::Migration.verbose = false
+  ::Sequel::Schema.define(:version => 1) do
     create_table :translations, :force => true do |t|
       t.string :locale
       t.string :key

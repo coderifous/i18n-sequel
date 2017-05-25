@@ -3,7 +3,7 @@ require 'i18n/backend/active_record/translation'
 
 module I18n
   module Backend
-    class ActiveRecord
+    class Sequel
       autoload :Missing,       'i18n/backend/active_record/missing'
       autoload :StoreProcs,    'i18n/backend/active_record/store_procs'
       autoload :Translation,   'i18n/backend/active_record/translation'
@@ -25,7 +25,7 @@ module I18n
         def available_locales
           begin
             Translation.available_locales
-          rescue ::ActiveRecord::StatementInvalid
+          rescue ::Sequel::StatementInvalid
             []
           end
         end
@@ -35,7 +35,7 @@ module I18n
           flatten_translations(locale, data, escape, false).each do |key, value|
             translation = Translation.locale(locale).lookup(expand_keys(key))
 
-            if ActiveRecord.config.cleanup_with_destroy
+            if Sequel.config.cleanup_with_destroy
               translation.destroy_all
             else
               translation.delete_all

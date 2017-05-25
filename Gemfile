@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 
 gemspec
 
-gem 'activerecord'
+gem 'sequel'
 gem 'sqlite3'
 gem 'pg'
 

@@ -46,13 +46,19 @@ module I18n
     #   # => 'FOO'
     class Sequel
       class Translation < ::Sequel::Model
+
         TRUTHY_CHAR = "\001"
         FALSY_CHAR = "\002"
 
-        self.table_name = 'translations'
+        plugin :serialization
 
-        serialize :value
-        serialize :interpolations, Array
+        serialize_attributes :yaml, :value
+        serialize_attributes :yaml, :interpolations
+
+        # Sequel does not support default values for serialize_attributes
+        def interpolations
+          super || []
+        end
 
         class << self
           def locale(locale)

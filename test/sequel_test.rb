@@ -7,13 +7,13 @@ class I18nBackendSequelTest < I18n::TestCase
   end
 
   def teardown
-    I18n::Backend::Sequel::Translation.destroy_all
+    I18n::Backend::Sequel::Translation.map(&:destroy)
     I18n::Backend::Sequel.instance_variable_set :@config, I18n::Backend::Sequel::Configuration.new
     super
   end
 
   test "store_translations does not allow ambiguous keys (1)" do
-    I18n::Backend::Sequel::Translation.delete_all
+    I18n::Backend::Sequel::Translation.dataset.delete
     I18n.backend.store_translations(:en, :foo => 'foo')
     I18n.backend.store_translations(:en, :foo => { :bar => 'bar' })
     I18n.backend.store_translations(:en, :foo => { :baz => 'baz' })
@@ -25,7 +25,7 @@ class I18nBackendSequelTest < I18n::TestCase
   end
 
   test "store_translations does not allow ambiguous keys (2)" do
-    I18n::Backend::Sequel::Translation.delete_all
+    I18n::Backend::Sequel::Translation.dataset.delete
     I18n.backend.store_translations(:en, :foo => { :bar => 'bar' })
     I18n.backend.store_translations(:en, :foo => { :baz => 'baz' })
     I18n.backend.store_translations(:en, :foo => 'foo')
@@ -51,7 +51,7 @@ class I18nBackendSequelTest < I18n::TestCase
   end
 
   test "available_locales returns uniq locales" do
-    I18n::Backend::Sequel::Translation.delete_all
+    I18n::Backend::Sequel::Translation.dataset.delete
     I18n.backend.store_translations(:en, :foo => { :bar => 'bar' })
     I18n.backend.store_translations(:en, :foo => { :baz => 'baz' })
     I18n.backend.store_translations(:de, :foo1 => 'foo')
@@ -78,7 +78,7 @@ class I18nBackendSequelTest < I18n::TestCase
   end
 
   test "fetching subtree of translations" do
-    I18n::Backend::Sequel::Translation.delete_all
+    I18n::Backend::Sequel::Translation.dataset.delete
     I18n.backend.store_translations(:en, foo: { bar: { fizz: 'buzz', spuz: 'zazz' }, baz: { fizz: 'buzz' } })
     assert_equal I18n.t(:foo), { bar: { fizz: 'buzz', spuz: 'zazz' }, baz: { fizz: 'buzz' } }
   end

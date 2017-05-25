@@ -36,9 +36,9 @@ module I18n
             translation = Translation.locale(locale).lookup(expand_keys(key))
 
             if Sequel.config.cleanup_with_destroy
-              translation.destroy_all
+              translation.map(&:destroy)
             else
-              translation.delete_all
+              translation.delete
             end
 
             Translation.create(:locale => locale.to_s, :key => key.to_s, :value => value)

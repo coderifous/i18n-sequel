@@ -8,7 +8,7 @@ class I18nSequelMissingTest < I18n::TestCase
   def setup
     I18n.backend.store_translations(:en, :bar => 'Bar', :i18n => { :plural => { :keys => [:zero, :one, :other] } })
     I18n.backend = I18n::Backend::Chain.new(Backend.new, I18n.backend)
-    I18n::Backend::Sequel::Translation.delete_all
+    I18n::Backend::Sequel::Translation.dataset.delete
   end
 
   test "can persist interpolations" do

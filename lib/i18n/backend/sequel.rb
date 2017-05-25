@@ -1,13 +1,13 @@
 require 'i18n/backend/base'
-require 'i18n/backend/active_record/translation'
+require 'i18n/backend/sequel/translation'
 
 module I18n
   module Backend
     class Sequel
-      autoload :Missing,       'i18n/backend/active_record/missing'
-      autoload :StoreProcs,    'i18n/backend/active_record/store_procs'
-      autoload :Translation,   'i18n/backend/active_record/translation'
-      autoload :Configuration, 'i18n/backend/active_record/configuration'
+      autoload :Missing,       'i18n/backend/sequel/missing'
+      autoload :StoreProcs,    'i18n/backend/sequel/store_procs'
+      autoload :Translation,   'i18n/backend/sequel/translation'
+      autoload :Configuration, 'i18n/backend/sequel/configuration'
 
       class << self
         def configure

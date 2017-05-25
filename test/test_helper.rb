@@ -5,16 +5,16 @@ require 'minitest/autorun'
 require 'mocha/setup'
 require 'test_declarative'
 
-require 'i18n/active_record'
+require 'i18n/sequel'
 require 'i18n/tests'
 
 begin
-  require 'active_record'
+  require 'sequel'
   ::Sequel::Base.connection
 rescue LoadError => e
   puts "can't use Sequel backend because: #{e.message}"
 rescue ::Sequel::ConnectionNotEstablished
-  require 'i18n/backend/active_record'
+  require 'i18n/backend/sequel'
   case ENV['DB']
   when 'postgres'
     ::Sequel::Base.establish_connection adapter: 'postgresql', database: 'i18n_unittest', username: ENV['PG_USER'] || 'i18n', password: '', host: 'localhost'

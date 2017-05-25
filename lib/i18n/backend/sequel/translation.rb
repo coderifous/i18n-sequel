@@ -1,4 +1,4 @@
-require 'active_record'
+require 'sequel'
 
 module I18n
   module Backend

@@ -45,7 +45,7 @@ module I18n
     #   Translation.find_by_locale_and_key('en', 'foo').value
     #   # => 'FOO'
     class Sequel
-      class Translation < ::Sequel::Base
+      class Translation < ::Sequel::Model
         TRUTHY_CHAR = "\001"
         FALSY_CHAR = "\002"
 

@@ -10,30 +10,29 @@ require 'i18n/tests'
 
 begin
   require 'sequel'
-  ::Sequel::Base.connection
+  Sequel::Model.db
 rescue LoadError => e
   puts "can't use Sequel backend because: #{e.message}"
-rescue ::Sequel::ConnectionNotEstablished
-  require 'i18n/backend/sequel'
+rescue Sequel::Error
   case ENV['DB']
   when 'postgres'
-    ::Sequel::Base.establish_connection adapter: 'postgresql', database: 'i18n_unittest', username: ENV['PG_USER'] || 'i18n', password: '', host: 'localhost'
+    Sequel.postgres 'i18n_unittest', user: ENV['PG_USER'] || 'i18n', password: '', host: 'localhost'
   when 'mysql'
-    ::Sequel::Base.establish_connection adapter: 'mysql2', database: 'i18n_unittest', username: 'root', password: '', host: 'localhost'
+    # Sequel.connect adapter: 'mysql2', database: 'i18n_unittest', username: 'root', password: '', host: 'localhost'
   else
-    ::Sequel::Base.establish_connection adapter: 'sqlite3', database: ':memory:'
+    Sequel.sqlite
   end
-  ::Sequel::Migration.verbose = false
-  ::Sequel::Schema.define(:version => 1) do
-    create_table :translations, :force => true do |t|
-      t.string :locale
-      t.string :key
-      t.text :value
-      t.text :interpolations
-      t.boolean :is_proc, :default => false
-    end
-    add_index :translations, [:locale, :key], :unique => true
+  Sequel::Model.db.create_table :translations do |t|
+    primary_key :id
+    String :locale
+    String :key
+    String :value, text: true
+    String :interpolations, text: true
+    TrueClass :is_proc, null: false, default: false
   end
+  Sequel::Model.db.add_index :translations, [:locale, :key], unique: true
+
+  require 'i18n/backend/sequel'
 end
 
 TEST_CASE = defined?(Minitest::Test) ? Minitest::Test : MiniTest::Unit::TestCase

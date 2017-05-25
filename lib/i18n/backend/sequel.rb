@@ -75,8 +75,8 @@ module I18n
         end
 
         # For a key :'foo.bar.baz' return ['foo', 'foo.bar', 'foo.bar.baz']
-        def expand_keys(key)
-          key.to_s.split(FLATTEN_SEPARATOR).inject([]) do |keys, key|
+        def expand_keys(unexpanded_key)
+          unexpanded_key.to_s.split(FLATTEN_SEPARATOR).inject([]) do |keys, key|
             keys << [keys.last, key].compact.join(FLATTEN_SEPARATOR)
           end
         end

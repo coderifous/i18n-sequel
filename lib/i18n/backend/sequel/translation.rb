@@ -93,7 +93,7 @@ module I18n
         end
 
         def value
-          value = read_attribute(:value)
+          value = super
           if is_proc
             Kernel.eval(value)
           elsif value == FALSY_CHAR
@@ -111,9 +111,9 @@ module I18n
           elsif value === true
             value = TRUTHY_CHAR
           end
-
-          write_attribute(:value, value)
+          super(value)
         end
+
       end
     end
   end

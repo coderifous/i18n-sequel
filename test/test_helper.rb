@@ -18,19 +18,21 @@ rescue Sequel::Error
   when 'postgres'
     Sequel.postgres 'i18n_unittest', user: ENV['PG_USER'] || 'i18n', password: '', host: 'localhost'
   when 'mysql'
-    # Sequel.connect adapter: 'mysql2', database: 'i18n_unittest', username: 'root', password: '', host: 'localhost'
+    Sequel.connect adapter: 'mysql2', database: 'i18n_unittest', username: 'root', password: '', host: 'localhost'
   else
     Sequel.sqlite
   end
-  Sequel::Model.db.create_table :translations do |t|
-    primary_key :id
-    String :locale
-    String :key
-    String :value, text: true
-    String :interpolations, text: true
-    TrueClass :is_proc, null: false, default: false
+  unless Sequel::Model.db.table_exists?(:translations)
+    Sequel::Model.db.create_table :translations do |t|
+      primary_key :id
+      String :locale
+      String :key
+      String :value, text: true
+      String :interpolations, text: true
+      TrueClass :is_proc, null: false, default: false
+    end
+    Sequel::Model.db.add_index :translations, [:locale, :key], unique: true
   end
-  Sequel::Model.db.add_index :translations, [:locale, :key], unique: true
 
   require 'i18n/backend/sequel'
 end

@@ -67,7 +67,6 @@ module I18n
           end
 
           def lookup(keys, *separator)
-            column_name = db.literal(:key)
             keys = Array(keys).map! { |key| key.to_s }
 
             unless separator.empty?

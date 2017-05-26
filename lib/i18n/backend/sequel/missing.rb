@@ -36,14 +36,14 @@ module I18n
         include Flatten
 
         def store_default_translations(locale, key, options = {})
-          count, scope, default, separator = options.values_at(:count, :scope, :default, :separator)
+          count, scope, separator = options.values_at(:count, :scope, :separator)
           separator ||= I18n.default_separator
           key = normalize_flat_keys(locale, key, scope, separator)
 
           unless Sequel::Translation.locale(locale).lookup(key).exists
             interpolations = options.keys - I18n::RESERVED_KEYS
             keys = count ? I18n.t('i18n.plural.keys', :locale => locale).map { |k| [key, k].join(FLATTEN_SEPARATOR) } : [key]
-            keys.each { |key| store_default_translation(locale, key, interpolations) }
+            keys.each { |k| store_default_translation(locale, k, interpolations) }
           end
         end
 

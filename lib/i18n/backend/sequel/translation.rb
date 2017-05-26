@@ -7,13 +7,15 @@ module I18n
     # This model expects a table like the following to be already set up in
     # your the database:
     #
-    #   create_table :translations do |t|
-    #     t.string :locale
-    #     t.string :key
-    #     t.text   :value
-    #     t.text   :interpolations
-    #     t.boolean :is_proc, :default => false
-    #   end
+    #    Sequel::Model.db.create_table :translations do |t|
+    #      primary_key :id
+    #      String :locale
+    #      String :key
+    #      String :value, text: true
+    #      String :interpolations, text: true
+    #      TrueClass :is_proc, null: false, default: false
+    #    end
+    #    Sequel::Model.db.add_index :translations, [:locale, :key], unique: true
     #
     # This model supports to named scopes :locale and :lookup. The :locale
     # scope simply adds a condition for a given locale:

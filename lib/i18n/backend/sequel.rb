@@ -25,7 +25,7 @@ module I18n
         def available_locales
           begin
             Translation.available_locales
-          rescue ::Sequel::StatementInvalid
+          rescue ::Sequel::Error
             []
           end
         end

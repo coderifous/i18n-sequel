@@ -40,15 +40,15 @@ module I18n
           separator ||= I18n.default_separator
           key = normalize_flat_keys(locale, key, scope, separator)
 
-          unless Sequel::Translation.locale(locale).lookup(key).exists
+          if Sequel::Translation.locale(locale).lookup(key).empty?
             interpolations = options.keys - I18n::RESERVED_KEYS
-            keys = count ? I18n.t('i18n.plural.keys', :locale => locale).map { |k| [key, k].join(FLATTEN_SEPARATOR) } : [key]
+            keys = count ? I18n.t('i18n.plural.keys', locale: locale).map { |k| [key, k].join(FLATTEN_SEPARATOR) } : [key]
             keys.each { |k| store_default_translation(locale, k, interpolations) }
           end
         end
 
         def store_default_translation(locale, key, interpolations)
-          translation = Sequel::Translation.new :locale => locale.to_s, :key => key
+          translation = Sequel::Translation.new locale: locale.to_s, key: key
           translation.interpolations = interpolations
           translation.save
         end
@@ -56,12 +56,13 @@ module I18n
         def translate(locale, key, options = {})
           result = catch(:exception) { super }
           if result.is_a?(I18n::MissingTranslation)
-            self.store_default_translations(locale, key, options)
+            store_default_translations(locale, key, options)
             throw(:exception, result)
           else
             result
           end
         end
+
       end
     end
   end

@@ -5,6 +5,7 @@ gemspec
 gem 'sequel'
 gem 'sqlite3'
 gem 'pg'
+gem 'activesupport'
 
 # Add this back when I have time to install mysql and test it.
 # gem 'mysql2'

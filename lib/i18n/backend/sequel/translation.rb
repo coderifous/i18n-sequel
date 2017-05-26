@@ -66,6 +66,10 @@ module I18n
             where(locale: locale.to_s)
           end
 
+          def find_by_key(key)
+            where(key: key).first
+          end
+
           def lookup(keys, *separator)
             keys = Array(keys).map! { |key| key.to_s }
 
@@ -78,12 +82,8 @@ module I18n
             where(key: keys).or(::Sequel.like(:key, namespace))
           end
 
-        end
-
-        class << self
-
           def available_locales
-            Translation.select('DISTINCT locale').to_a.map { |t| t.locale.to_sym }
+            distinct.select(:locale).all.map { |t| t.locale.to_sym }
           end
 
         end

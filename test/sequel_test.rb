@@ -1,6 +1,7 @@
 require 'test_helper'
 
 class I18nBackendSequelTest < I18n::TestCase
+
   def setup
     I18n.backend = I18n::Backend::Sequel.new
     store_translations(:en, :foo => { :bar => 'bar', :baz => 'baz' })
@@ -42,7 +43,7 @@ class I18nBackendSequelTest < I18n::TestCase
   end
 
   test "missing translations table does not cause an error in #available_locales" do
-    I18n::Backend::Sequel::Translation.expects(:available_locales).raises(::Sequel::StatementInvalid, 'msg')
+    I18n::Backend::Sequel::Translation.expects(:available_locales).raises(::Sequel::Error, 'msg')
     assert_equal [], I18n.backend.available_locales
   end
 
@@ -88,4 +89,5 @@ class I18nBackendSequelTest < I18n::TestCase
     expected_hash = { 'bar' => { 'fizz' => { 'buzz' => 'translation' } } }
     assert_equal I18n.backend.send(:build_translation_hash_by_key, 'foo', translation), expected_hash
   end
+
 end
